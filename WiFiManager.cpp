@@ -3704,11 +3704,13 @@ String WiFiManager::WiFi_SSID(bool persistent) const{
     return String(reinterpret_cast<char*>(tmp));
     
     #elif defined(ESP32)
-    if(persistent){
-      wifi_config_t conf;
-      esp_wifi_get_config(WIFI_IF_STA, &conf);
-      return String(reinterpret_cast<const char*>(conf.sta.ssid));
+    if (persistent){
+    wifi_config_t conf;
+    if (esp_wifi_get_config(WIFI_IF_STA, &conf) == ESP_OK) {
+        return String(reinterpret_cast<const char*>(conf.sta.ssid));
     }
+    return String();
+}
     else {
       if(WiFiGenericClass::getMode() == WIFI_MODE_NULL){
           return String();
